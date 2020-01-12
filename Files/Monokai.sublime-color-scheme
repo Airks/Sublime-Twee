@@ -1,0 +1,99 @@
+{
+	"name": "Monokai custom for Twee",
+	"rules":
+	[
+		{
+			"name": "Twee macros",
+			"scope": "keyword.control.twee",
+			"font_style": "italic"
+		},
+		{
+			"name": "Macro begin",
+			"scope": "punctuation.definition.function.begin.twee",
+			"foreground": "red"
+		},
+		{
+			"name": "Macro end",
+			"scope": "punctuation.definition.function.end.twee",
+			"foreground": "red"
+		},
+		{
+			"name": "Existing macro",
+			"scope": "keyword.other.existing-macro",
+			"foreground": "lime",
+			"font_style": "italic"
+		},
+		{
+			"name": "User macro",
+			"scope": "keyword.other.user-macro",
+			"foreground": "limegreen"
+		},
+		{
+			"name": "Story variable",
+			"scope": "variable.other.story",
+			"foreground": "lightsteelblue"
+		},
+		{
+			"name": "Story variable",
+			"scope": "variable.other.temporary",
+			"foreground": "mediumslateblue"
+		},
+		{
+			"name": "Variable attribute",
+			"scope": "variable.other.attribute",
+			"foreground": "steelblue",
+			"font_style": "italic"
+		},
+		{
+			"name": "Passage beginning",
+			"scope": "punctuation.definition.passage.start",
+			"foreground": "slategrey"
+		},
+		{
+			"name": "Passage name",
+			"scope": "variable.other.passage.name",
+			"foreground": "slategrey"
+		},
+		{
+			"name": "Passage tag",
+			"scope": "variable.other.passage.tag",
+			"foreground": "darkgray"
+		},
+		{
+			"name": "Bracket begin",
+			"scope": "punctuation.definition.bracket.begin",
+			"foreground": "goldenrod"
+		},
+		{
+			"name": "Bracket end",
+			"scope": "punctuation.definition.bracket.end",
+			"foreground": "goldenrod"
+		},
+		{
+			"name": "Parenthesis begin",
+			"scope": "punctuation.definition.parenthesis.begin",
+			"foreground": "orangered"
+		},
+		{
+			"name": "Parenthesis end",
+			"scope": "punctuation.definition.parenthesis.end",
+			"foreground": "orangered"
+		},
+		{
+			"name": "Link",
+			"scope": "punctuation.definition.link",
+			"foreground": "peru",
+			"font_style": "bold"
+		},
+		{
+			"name": "Object key",
+			"scope": "variable.other.object.key",
+			"foreground": "darksalmon"
+		},
+		{
+			"name": "Colon",
+			"scope": "punctuation.separator.colon",
+			"foreground": "yellow"
+		}
+	]
+}
