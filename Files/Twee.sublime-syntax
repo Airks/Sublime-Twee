@@ -7,7 +7,7 @@ file_extensions:
 scope: text.twee
 contexts:
 
-## TODO: handle SugarCube APIs
+## TODO: handle SugarCube APIs - DONE
 
   main:
     - match: '::'
@@ -46,6 +46,7 @@ contexts:
     - include: variables
     - include: scope:text.html.basic
 
+############### MARKUP ###############
   bold:
     - meta_scope: markup.bold
     - match: "''"
@@ -54,33 +55,11 @@ contexts:
 
   italic:
     - meta_scope: markup.italic
-    - match: "//"
+    - match: '//'
       pop: true
     - include: main
-  variables:
-    - match: '(\$[A-Za-z0-9_$]*)(\.[A-Za-z0-9$_.]*)*'
-      captures:
-        1: variable.other.story
-        2: variable.other.attribute
-
-    - match: '(_[A-Za-z0-9_$]*)(\.[A-Za-z0-9$_.]*)?'
-      captures:
-        1: variable.other.temporary
-        2: variable.other.attribute
-
-    - match: '\[{1}'
-      scope: punctuation.definition.bracket.begin
-      push: brackets
-
-  passage:
-    - match: '\n'
-      pop: true
-    - match: '[^\[\{\n]*'
-      scope: variable.other.passage.name
-    - match: \[.*\]
-      scope: variable.other.passage.tag
-    - include: scope:source.json
-
+  
+############### MACRO ###############
   macro:
     - meta_content_scope: meta.macro.content
     - match: (>>)
@@ -90,22 +69,43 @@ contexts:
     - match: '[\w]*'
       scope: invalid.illegal.stray-text
 
+  brackets:
+    - meta_scope: meta.brackets
+    - match: '\]'
+      scope: punctuation.definition.bracket.end
+      pop: true
+    - include: string
+    - include: numerics
+    - include: variables
+
+############### COMEMNT ###############
+  comment:
+    - meta_content_scope: comment.block.twee
+    - match: \*/
+      scope: comment.block.punctuation.definition.end.twee
+      pop: true
+
+############### CONTENT ###############
   content:
     - include: numerics
     - match: '(\[\[)'
       scope: punctuation.definition.link.begin.twee
       push: link
+
     - include: variables
     - include: string
+
     - match: \b(eq|neq|gt|gte|lt|lte|and|or|not|to|is|range|autofocus|checked|t8n)\b
       scope: keyword.operator.twee
+
     - match: '!|%|&|\*|\-\-|\-|\+\+|\+|~|===|==|=|!=|!==|<=|>=|<<=|>>=|>>>=|<>|<|>|!|&&|\|\||\?\:|\*=|(?<!\()/=|%=|\+=|\-=|&=|\^=|\b(in|instanceof|new|delete|typeof|void)\b'
       scope: keyword.operator.js
+
     - match: (true|false)
       scope: constant.language
 
     # Functions
-    - match: '[\w]*\('
+    - match: '(\w*\.)?(\w)*\('
       push: function
 
     - match: \(
@@ -117,12 +117,59 @@ contexts:
     - match: \{
       push: curly
 
+############### CURLY ###############
+  curly:
+    - meta_content_scope: meta.braces
+    - match: '\}'
+      pop: true
+    - include: numerics
+    - match: '\w'
+      scope: variable.other.object.key
+    - match: ':'
+      scope: punctuation.separator.colon
+    - include: string
+    - include: content
+
+############### FUNCTION ###############
   function:
     - meta_scope: entity.name.function
     - match: \)
       pop: true
     - include: content
 
+############### LINK ###############
+  link:
+    - match: '\]\]'
+      scope: punctuation.definition.link.end.twee
+      pop: true
+    - match: '(\]\[)|\|'
+      scope: punctuation.definition.link.middle.twee
+    - include: variables
+
+############### NUMERICS ###############
+  numerics:
+    - match: '\b((0(x|X)[0-9a-fA-F]+)|([0-9]+(\.[0-9]+)?))\b'
+      scope: constant.numeric.js
+
+############### PARENTHESIS ###############
+  parenthesis:
+    - meta_content_scope: meta.parens
+    - match: \)
+      scope: punctuation.definition.parenthesis.end
+      pop: true
+    - include: content
+
+############### PASSAGE ###############
+  passage:
+    - match: '\n'
+      pop: true
+    - match: '[^\[\{\n]*'
+      scope: variable.other.passage.name
+    - match: \[.*\]
+      scope: variable.other.passage.tag
+    - include: scope:source.json
+
+############### STRING ###############
   string:
     - match: '"'
       push: stringDouble
@@ -139,48 +186,18 @@ contexts:
     - match: "'"
       pop: true
 
-  parenthesis:
-    - meta_content_scope: meta.parens
-    - match: \)
-      scope: punctuation.definition.parenthesis.end
-      pop: true
-    - include: content
+############### VARIABLES ###############
+  variables:
+    - match: '(\$[A-Za-z0-9_$]*)(\.[A-Za-z0-9$_.]*)*'
+      captures:
+        1: variable.other.story
+        2: variable.other.attribute
 
-  brackets:
-    - meta_scope: meta.brackets
-    - match: '\]'
-      scope: punctuation.definition.bracket.end
-      pop: true
-    - include: string
-    - include: numerics
-    - include: variables
+    - match: '(_[A-Za-z0-9_$]*)(\.[A-Za-z0-9$_.]*)?'
+      captures:
+        1: variable.other.temporary
+        2: variable.other.attribute
 
-  curly:
-    - meta_content_scope: meta.braces
-    - match: '\}'
-      pop: true
-    - include: numerics
-    - match: '\w'
-      scope: variable.other.object.key
-    - match: ':'
-      scope: punctuation.separator.colon
-    - include: string
-    - include: content
-
-  comment:
-    - meta_content_scope: comment.block.twee
-    - match: \*/
-      scope: comment.block.punctuation.definition.end.twee
-      pop: true
-
-  link:
-    - match: '\]\]'
-      scope: punctuation.definition.link.end.twee
-      pop: true
-    - match: '(\]\[)|\|'
-      scope: punctuation.definition.link.middle.twee
-    - include: variables
-
-  numerics:
-    - match: '\b((0(x|X)[0-9a-fA-F]+)|([0-9]+(\.[0-9]+)?))\b'
-      scope: constant.numeric.js
+    - match: '\[{1}'
+      scope: punctuation.definition.bracket.begin
+      push: brackets
