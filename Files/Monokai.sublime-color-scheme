@@ -8,24 +8,19 @@
 			"font_style": "italic"
 		},
 		{
-			"name": "Macro begin",
-			"scope": "punctuation.definition.function.begin.twee",
-			"foreground": "red"
-		},
-		{
-			"name": "Macro end",
-			"scope": "punctuation.definition.function.end.twee",
+			"name": "Macro opening and closing",
+			"scope": "punctuation.section.macro",
 			"foreground": "red"
 		},
 		{
 			"name": "Existing macro",
-			"scope": "keyword.other.existing-macro",
+			"scope": "variable.macro.language",
 			"foreground": "lime",
 			"font_style": "italic"
 		},
 		{
 			"name": "User macro",
-			"scope": "keyword.other.user-macro",
+			"scope": "variable.macro.user",
 			"foreground": "limegreen"
 		},
 		{
@@ -45,13 +40,8 @@
 			"font_style": "italic"
 		},
 		{
-			"name": "Passage beginning",
-			"scope": "punctuation.definition.passage.start",
-			"foreground": "slategrey"
-		},
-		{
-			"name": "Passage name",
-			"scope": "variable.other.passage.name",
+			"name": "Passage name and indicator",
+			"scope": "punctuation.definition.passage.start, variable.other.passage.name",
 			"foreground": "slategrey"
 		},
 		{
@@ -60,23 +50,13 @@
 			"foreground": "darkgray"
 		},
 		{
-			"name": "Bracket begin",
-			"scope": "punctuation.definition.bracket.begin",
+			"name": "Bracket begin and end",
+			"scope": "punctuation.definition.bracket",
 			"foreground": "goldenrod"
 		},
 		{
-			"name": "Bracket end",
-			"scope": "punctuation.definition.bracket.end",
-			"foreground": "goldenrod"
-		},
-		{
-			"name": "Parenthesis begin",
-			"scope": "punctuation.definition.parenthesis.begin",
-			"foreground": "orangered"
-		},
-		{
-			"name": "Parenthesis end",
-			"scope": "punctuation.definition.parenthesis.end",
+			"name": "Parenthesis begin and end",
+			"scope": "punctuation.section.parens",
 			"foreground": "orangered"
 		},
 		{
