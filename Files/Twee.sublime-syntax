@@ -7,8 +7,6 @@ file_extensions:
 scope: text.twee
 contexts:
 
-## TODO: handle SugarCube APIs - DONE
-
   main:
     - match: '::'
       scope: punctuation.definition.passage.start
@@ -17,9 +15,9 @@ contexts:
     # Macros
     - match: '(<<(/)?)((=|\-|actions|addclass|append|audio|back|break|button|cacheaudio|capture|checkbox|choice|continue|copy|createaudiogroup|createplaylist|cycle|elseif|else|for|goto|if|include|link|linkappend|linkprepend|linkreplace|listbox|masteraudio|nobr|playlist|prepend|print|radiobutton|remove|removeclass|removeplaylist|repeat|replace|return|run|script|set|silently|stop|switch|textarea|textbox|timed|toggleclass|unset|waitforaudio|widget)\b|([\w]*))'
       captures:
-        1: punctuation.definition.function.begin.twee
-        3: keyword.other.user-macro
-        4: keyword.other.existing-macro
+        1: punctuation.section.macro.begin.twee
+        4: variable.macro.language
+        5: variable.macro.user
       push: macro
 
     # Comments
@@ -35,11 +33,26 @@ contexts:
       push: bold
     - match: "//"
       push: italic
+    - match: __
+      push: underline
 
     - match: '"""'
       set:
         - match: '"""'
           pop: true
+
+    - match: '^\s*(!{1,6})[^\n!]+'
+      scope: markup.heading
+      captures:
+        1: punctuation.definition.heading
+
+    - match: '^(#)[^\n]+'
+      captures:
+        1: markup.list.numbered.bullet
+
+    - match: '^(\*)[^\n]+'
+      captures:
+        1: markup.list.unnumbered.bullet
 
     - match: '\$\$[A-Za-z0-9_$]*'
 
@@ -58,17 +71,24 @@ contexts:
     - match: '//'
       pop: true
     - include: main
+
+  underline:
+    - meta_scope: markup.underline
+    - match: __
+      pop: true
+    - include: main
   
 ############### MACRO ###############
   macro:
     - meta_content_scope: meta.macro.content
     - match: (>>)
-      scope: punctuation.definition.function.end.twee
+      scope: punctuation.section.macro.end.twee
       pop: true
     - include: content
     - match: '[\w]*'
       scope: invalid.illegal.stray-text
 
+############### BRACKETS ###############
   brackets:
     - meta_scope: meta.brackets
     - match: '\]'
@@ -95,8 +115,15 @@ contexts:
     - include: variables
     - include: string
 
-    - match: \b(eq|neq|gt|gte|lt|lte|and|or|not|to|is|range|autofocus|checked|t8n)\b
-      scope: keyword.operator.twee
+    - match: \b(eq|neq|gt|gte|lt|lte|and|or|not|to|is)\b
+      scope: keyword.operator.word.twee
+
+    - match: \b(range|autofocus|checked|t8n)\b
+      scope: keyword.other.macro-keyword.twee
+
+    - match: '(?==\s*\{)'
+      embed: curly
+      escape: '\}'
 
     - match: '!|%|&|\*|\-\-|\-|\+\+|\+|~|===|==|=|!=|!==|<=|>=|<<=|>>=|>>>=|<>|<|>|!|&&|\|\||\?\:|\*=|(?<!\()/=|%=|\+=|\-=|&=|\^=|\b(in|instanceof|new|delete|typeof|void)\b'
       scope: keyword.operator.js
@@ -105,30 +132,22 @@ contexts:
       scope: constant.language
 
     # Functions
-    - match: '(\w*\.)?(\w)*\('
+    - match: '(\w*\.)?(\w+\()'
       push: function
 
     - match: \(
-      scope: punctuation.definition.parenthesis.begin
+      scope: punctuation.section.parens.begin
       push: parenthesis
     - match: \)
       scope: invalid.illegal.stray-parent-end
 
-    - match: \{
-      push: curly
 
 ############### CURLY ###############
   curly:
-    - meta_content_scope: meta.braces
     - match: '\}'
       pop: true
-    - include: numerics
-    - match: '\w'
-      scope: variable.other.object.key
-    - match: ':'
-      scope: punctuation.separator.colon
-    - include: string
-    - include: content
+    - include: scope:source.js
+    
 
 ############### FUNCTION ###############
   function:
@@ -139,23 +158,31 @@ contexts:
 
 ############### LINK ###############
   link:
+    - meta_content_scope: markup.underline.link
     - match: '\]\]'
       scope: punctuation.definition.link.end.twee
       pop: true
-    - match: '(\]\[)|\|'
+    - match: '\|'
       scope: punctuation.definition.link.middle.twee
+    - match: (\]\[)
+      scope: punctuation.definition.link.setter.twee
+      set:
+        - include: content
+        - match: '\]\]'
+          scope: punctuation.definition.link.end.twee
+          pop: true
     - include: variables
 
 ############### NUMERICS ###############
   numerics:
     - match: '\b((0(x|X)[0-9a-fA-F]+)|([0-9]+(\.[0-9]+)?))\b'
-      scope: constant.numeric.js
+      scope: constant.numeric.twee
 
 ############### PARENTHESIS ###############
   parenthesis:
     - meta_content_scope: meta.parens
     - match: \)
-      scope: punctuation.definition.parenthesis.end
+      scope: punctuation.section.parens.end
       pop: true
     - include: content
 
@@ -165,6 +192,13 @@ contexts:
       pop: true
     - match: '[^\[\{\n]*'
       scope: variable.other.passage.name
+    - match: '\[.*\bscript\b.*\]'
+      push:
+        - meta_scope: meta.js
+        - meta_content_scope: source.embeded.js
+        - match: ^(::)
+          pop: true
+        - include: scope:source.js
     - match: \[.*\]
       scope: variable.other.passage.tag
     - include: scope:source.json
@@ -188,16 +222,16 @@ contexts:
 
 ############### VARIABLES ###############
   variables:
-    - match: '(\$[A-Za-z0-9_$]*)(\.[A-Za-z0-9$_.]*)*'
+    - match: '(\$[A-Za-z_$][A-Za-z0-9_$]*)(\.[A-Za-z0-9$_.]*)*'
       captures:
         1: variable.other.story
-        2: variable.other.attribute
+        2: variable.parameter
 
-    - match: '(_[A-Za-z0-9_$]*)(\.[A-Za-z0-9$_.]*)?'
+    - match: '(_[A-Za-z_$][A-Za-z0-9_$]*)(\.[A-Za-z0-9$_.]*)?'
       captures:
         1: variable.other.temporary
-        2: variable.other.attribute
+        2: variable.parameter
 
-    - match: '\[{1}'
+    - match: '\['
       scope: punctuation.definition.bracket.begin
       push: brackets
