@@ -10,28 +10,28 @@
 		{
 			"name": "Macro opening and closing",
 			"scope": "punctuation.section.macro",
-			"foreground": "red"
+			"foreground": "deepskyblue"
 		},
 		{
 			"name": "Existing macro",
 			"scope": "variable.macro.language",
-			"foreground": "lime",
+			"foreground": "orchid",
 			"font_style": "italic"
 		},
 		{
 			"name": "User macro",
 			"scope": "variable.macro.user",
-			"foreground": "limegreen"
+			"foreground": "lightcoral"
 		},
 		{
 			"name": "Story variable",
 			"scope": "variable.other.story",
-			"foreground": "lightsteelblue"
+			"foreground": "wheat"
 		},
 		{
 			"name": "Story variable",
 			"scope": "variable.other.temporary",
-			"foreground": "mediumslateblue"
+			"foreground": "cyan"
 		},
 		{
 			"name": "Variable attribute",
@@ -66,14 +66,10 @@
 			"font_style": "bold"
 		},
 		{
-			"name": "Object key",
-			"scope": "variable.other.object.key",
-			"foreground": "darksalmon"
-		},
-		{
-			"name": "Colon",
-			"scope": "punctuation.separator.colon",
-			"foreground": "yellow"
+			"name": "Variable parameter",
+			"scope": "variable.parameter",
+			"foreground": "tan",
+			"font_style": "italic"
 		}
 	]
 }
