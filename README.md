@@ -10,4 +10,4 @@ I have only tried it with Monokai color scheme, there's still room for improveme
 
 ## Key Bindings
 
-If you wish to have the `<<` match with the `>>` as you type, add [this](Files/Key Bindings) to yours (Preferences > Key Bindings)
+If you wish to have the `<<` match with the `>>` as you type, add [this](Files/Key_Bindings) to yours (Preferences > Key Bindings)
