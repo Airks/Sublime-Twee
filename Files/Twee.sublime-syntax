@@ -1,0 +1,186 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: Twee
+file_extensions:
+  - tw
+scope: text.twee
+contexts:
+
+## TODO: handle SugarCube APIs
+
+  main:
+    - match: '::'
+      scope: punctuation.definition.passage.start
+      push: passage
+
+    # Macros
+    - match: '(<<(/)?)((=|\-|actions|addclass|append|audio|back|break|button|cacheaudio|capture|checkbox|choice|continue|copy|createaudiogroup|createplaylist|cycle|elseif|else|for|goto|if|include|link|linkappend|linkprepend|linkreplace|listbox|masteraudio|nobr|playlist|prepend|print|radiobutton|remove|removeclass|removeplaylist|repeat|replace|return|run|script|set|silently|stop|switch|textarea|textbox|timed|toggleclass|unset|waitforaudio|widget)\b|([\w]*))'
+      captures:
+        1: punctuation.definition.function.begin.twee
+        3: keyword.other.user-macro
+        4: keyword.other.existing-macro
+      push: macro
+
+    # Comments
+    - match: '/\*'
+      scope: comment.block.punctuation.definition.begin.twee
+      push: comment
+
+    # Links
+    - match: '(\[\[)'
+      scope: punctuation.definition.link.begin.twee
+      push: link
+    - match: "''"
+      push: bold
+    - match: "//"
+      push: italic
+
+    - match: '"""'
+      set:
+        - match: '"""'
+          pop: true
+
+    - match: '\$\$[A-Za-z0-9_$]*'
+
+    - include: variables
+    - include: scope:text.html.basic
+
+  bold:
+    - meta_scope: markup.bold
+    - match: "''"
+      pop: true
+    - include: main
+
+  italic:
+    - meta_scope: markup.italic
+    - match: "//"
+      pop: true
+    - include: main
+  variables:
+    - match: '(\$[A-Za-z0-9_$]*)(\.[A-Za-z0-9$_.]*)*'
+      captures:
+        1: variable.other.story
+        2: variable.other.attribute
+
+    - match: '(_[A-Za-z0-9_$]*)(\.[A-Za-z0-9$_.]*)?'
+      captures:
+        1: variable.other.temporary
+        2: variable.other.attribute
+
+    - match: '\[{1}'
+      scope: punctuation.definition.bracket.begin
+      push: brackets
+
+  passage:
+    - match: '\n'
+      pop: true
+    - match: '[^\[\{\n]*'
+      scope: variable.other.passage.name
+    - match: \[.*\]
+      scope: variable.other.passage.tag
+    - include: scope:source.json
+
+  macro:
+    - meta_content_scope: meta.macro.content
+    - match: (>>)
+      scope: punctuation.definition.function.end.twee
+      pop: true
+    - include: content
+    - match: '[\w]*'
+      scope: invalid.illegal.stray-text
+
+  content:
+    - include: numerics
+    - match: '(\[\[)'
+      scope: punctuation.definition.link.begin.twee
+      push: link
+    - include: variables
+    - include: string
+    - match: \b(eq|neq|gt|gte|lt|lte|and|or|not|to|is|range|autofocus|checked|t8n)\b
+      scope: keyword.operator.twee
+    - match: '!|%|&|\*|\-\-|\-|\+\+|\+|~|===|==|=|!=|!==|<=|>=|<<=|>>=|>>>=|<>|<|>|!|&&|\|\||\?\:|\*=|(?<!\()/=|%=|\+=|\-=|&=|\^=|\b(in|instanceof|new|delete|typeof|void)\b'
+      scope: keyword.operator.js
+    - match: (true|false)
+      scope: constant.language
+
+    # Functions
+    - match: '[\w]*\('
+      push: function
+
+    - match: \(
+      scope: punctuation.definition.parenthesis.begin
+      push: parenthesis
+    - match: \)
+      scope: invalid.illegal.stray-parent-end
+
+    - match: \{
+      push: curly
+
+  function:
+    - meta_scope: entity.name.function
+    - match: \)
+      pop: true
+    - include: content
+
+  string:
+    - match: '"'
+      push: stringDouble
+    - match: "'"
+      push: stringSimple
+
+  stringDouble:
+    - meta_scope: string.quoted.double.twee
+    - match: '"'
+      pop: true
+
+  stringSimple:
+    - meta_scope: string.quoted.simple.twee
+    - match: "'"
+      pop: true
+
+  parenthesis:
+    - meta_content_scope: meta.parens
+    - match: \)
+      scope: punctuation.definition.parenthesis.end
+      pop: true
+    - include: content
+
+  brackets:
+    - meta_scope: meta.brackets
+    - match: '\]'
+      scope: punctuation.definition.bracket.end
+      pop: true
+    - include: string
+    - include: numerics
+    - include: variables
+
+  curly:
+    - meta_content_scope: meta.braces
+    - match: '\}'
+      pop: true
+    - include: numerics
+    - match: '\w'
+      scope: variable.other.object.key
+    - match: ':'
+      scope: punctuation.separator.colon
+    - include: string
+    - include: content
+
+  comment:
+    - meta_content_scope: comment.block.twee
+    - match: \*/
+      scope: comment.block.punctuation.definition.end.twee
+      pop: true
+
+  link:
+    - match: '\]\]'
+      scope: punctuation.definition.link.end.twee
+      pop: true
+    - match: '(\]\[)|\|'
+      scope: punctuation.definition.link.middle.twee
+    - include: variables
+
+  numerics:
+    - match: '\b((0(x|X)[0-9a-fA-F]+)|([0-9]+(\.[0-9]+)?))\b'
+      scope: constant.numeric.js
