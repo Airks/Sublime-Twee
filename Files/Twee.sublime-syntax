@@ -29,6 +29,8 @@ contexts:
     - match: '(\[\[)'
       scope: punctuation.definition.link.begin.twee
       push: link
+
+    # Markup
     - match: "''"
       push: bold
     - match: "//"
@@ -36,16 +38,19 @@ contexts:
     - match: __
       push: underline
 
+    # Nowiki
     - match: '"""'
       set:
         - match: '"""'
           pop: true
 
+    # Headings
     - match: '^\s*(!{1,6})[^\n!]+'
       scope: markup.heading
       captures:
         1: punctuation.definition.heading
 
+    # Lists
     - match: '^(#)[^\n]+'
       captures:
         1: markup.list.numbered.bullet
@@ -54,6 +59,7 @@ contexts:
       captures:
         1: markup.list.unnumbered.bullet
 
+    # Nowiki $$
     - match: '\$\$[A-Za-z0-9_$]*'
 
     - include: variables
