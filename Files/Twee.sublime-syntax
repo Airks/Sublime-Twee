@@ -129,7 +129,7 @@ contexts:
 
     - match: '(?==\s*\{)'
       embed: curly
-      escape: '\}'
+      escape: '\}(?=\s>>)'
 
     - match: '!|%|&|\*|\-\-|\-|\+\+|\+|~|===|==|=|!=|!==|<=|>=|<<=|>>=|>>>=|<>|<|>|!|&&|\|\||\?\:|\*=|(?<!\()/=|%=|\+=|\-=|&=|\^=|\b(in|instanceof|new|delete|typeof|void)\b'
       scope: keyword.operator.js
